@@ -24,6 +24,8 @@ model Users {
   updated_at      DateTime    @updatedAt
 
   apiKeys         ApiKeys[]
+  emailLogs       EmailLogs[]
+  emailTemplate   EmailTemplate[]
   
   @@map("users")
 }
@@ -35,5 +37,39 @@ model ApiKeys{
   name            String?
   revoked         Boolean     @default(false)
   created_at      DateTime    @default(now())
+
+  @@map("api_keys")
   
+}
+
+model EmailTemplate{
+  id               String      @id
+  //name for the template
+  name             String   
+  html             String
+  requiredFields   Json
+  createdBy        String?
+  user             Users?         @relation(fields: [createdBy] , references: [id])
+
+}
+
+model EmailLogs{
+  id            String       @id @default(uuid())
+  userId        String
+  user          Users        @relation(fields: [userId] , references: [id])
+  fromEmail     String              
+  toEmail       String
+  subject       String
+  messageId     String      
+  status        Status?      @default(PENDING)
+  createdAt     DateTime     @default(now())
+  sentAt        DateTime     @default(now())
+
+  @@map("email_logs")
+}
+
+enum Status{
+  PENDING
+  SENT
+  FAILED
 }
