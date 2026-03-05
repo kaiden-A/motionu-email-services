@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { user } from 'node_modules/@getbrevo/brevo/dist/cjs/api';
 import { BrevoService } from 'src/brevo/brevo.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserPayloadDto } from './dto/user-payload.dto';

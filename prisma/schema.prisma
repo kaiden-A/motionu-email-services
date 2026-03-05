@@ -17,6 +17,7 @@ datasource db {
 model Users {
   
   id              String      @id @default(uuid())
+  name            String
   email           String      @unique
   password_hash   String
   is_verified     Boolean
