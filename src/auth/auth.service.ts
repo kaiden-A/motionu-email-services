@@ -4,13 +4,16 @@ import { CreateUserDto } from 'src/users/dto/create-users.dto';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { LoginUsersDto } from 'src/users/dto/login-users.dto';
+import * as crypto from 'crypto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
 
     constructor(
         private jwtService : JwtService,
-        private userService : UsersService
+        private userService : UsersService,
+        private prisma : PrismaService
     ){}
 
     async signUp(params : CreateUserDto){
@@ -69,6 +72,33 @@ export class AuthService {
             access_token : token 
         }
 
+    }
+
+    async generateApiKey(params : {
+        userId : string,
+        name : string
+    }){
+
+        const {userId , name} = params
+
+        const apiKey = crypto.randomBytes(32).toString('hex');
+        const strApiKey = await this.prisma.apiKeys.create({
+            data : {
+                userId : userId,
+                name : name,
+                apiKey : apiKey
+            }
+        })
+
+        if(!strApiKey){
+            throw new Error('Fail Creating the API Key')
+        }
+
+        return {
+            success : true, 
+            apiKey : apiKey,
+            message :  `Please Keep Your API key safe`
+        }
     }
 
 }

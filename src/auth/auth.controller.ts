@@ -1,7 +1,9 @@
-import { Controller, Post , Body } from '@nestjs/common';
+import { Controller, Post , Body , Req , UseGuards } from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dto/create-users.dto';
 import { AuthService } from './auth.service';
 import { LoginUsersDto } from 'src/users/dto/login-users.dto';
+import { AuthGuard } from './auth.guard';
+import { GenerateApiKeyDto } from './dto/create-api-key.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -16,6 +18,19 @@ export class AuthController {
     @Post('/login')
     async login(@Body() data : LoginUsersDto){
         return this.authService.login(data);
+    }
+
+    @UseGuards(AuthGuard)
+    @Post('/generate-token')
+    async generateApiKey(
+        @Body() data : GenerateApiKeyDto,
+        @Req() request : Request
+    ){
+        const user = request['user'];
+        return this.authService.generateApiKey({
+            userId : user.id,
+            name : data.name 
+        })
     }
 
 }

@@ -1,12 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
   moduleFormat = "cjs"
 }
 
@@ -15,62 +9,56 @@ datasource db {
 }
 
 model Users {
-  
-  id              String      @id @default(uuid())
-  name            String
-  email           String      @unique
-  password_hash   String
-  is_verified     Boolean
-  created_at      DateTime    @default(now())
-  updated_at      DateTime    @updatedAt
+  id            String          @id @default(uuid())
+  email         String          @unique
+  password_hash String
+  is_verified   Boolean
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+  emailTemplate EmailTemplate[]
+  apiKeys       ApiKeys[]
+  emailLogs     EmailLogs[]
 
-  apiKeys         ApiKeys[]
-  emailLogs       EmailLogs[]
-  emailTemplate   EmailTemplate[]
-  
   @@map("users")
 }
 
-model ApiKeys{
-  id              String      @id @default(uuid())
-  userId          String?
-  apiKey          String      @unique
-  user            Users?      @relation(fields: [userId] , references: [id])
-  name            String?
-  revoked         Boolean     @default(false)
-  created_at      DateTime    @default(now())
+model ApiKeys {
+  id         String   @id @default(uuid())
+  userId     String?
+  name       String?
+  revoked    Boolean  @default(false)
+  created_at DateTime @default(now())
+  apiKey     String   @unique
+  user       Users?   @relation(fields: [userId], references: [id])
 
   @@map("api_keys")
-  
 }
 
-model EmailTemplate{
-  id               String      @id
-  //name for the template
-  name             String   
-  html             String
-  requiredFields   Json
-  createdBy        String?
-  user             Users?         @relation(fields: [createdBy] , references: [id])
-
+model EmailTemplate {
+  id             String  @id
+  name           String
+  html           String
+  requiredFields Json
+  createdBy      String?
+  user           Users?  @relation(fields: [createdBy], references: [id])
 }
 
-model EmailLogs{
-  id            String       @id @default(uuid())
-  userId        String
-  user          Users        @relation(fields: [userId] , references: [id])
-  fromEmail     String              
-  toEmail       String
-  subject       String
-  messageId     String      
-  status        Status?      @default(PENDING)
-  createdAt     DateTime     @default(now())
-  sentAt        DateTime     @default(now())
+model EmailLogs {
+  id        String   @id @default(uuid())
+  userId    String
+  fromEmail String
+  toEmail   String
+  subject   String
+  messageId String
+  status    Status?  @default(PENDING)
+  createdAt DateTime @default(now())
+  sentAt    DateTime @default(now())
+  user      Users    @relation(fields: [userId], references: [id])
 
   @@map("email_logs")
 }
 
-enum Status{
+enum Status {
   PENDING
   SENT
   FAILED

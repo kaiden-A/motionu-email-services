@@ -10,11 +10,12 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({isGlobal : true}),
     PrismaModule, 
     EmailsModule, 
     UsersModule, 
     BrevoModule , 
-    ConfigModule.forRoot({isGlobal : true}), AuthModule
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
