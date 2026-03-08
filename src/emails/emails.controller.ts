@@ -16,8 +16,8 @@ export class EmailsController {
         return this.emailService.sendEmailTemplate({
             templateId : data.templateId,
             to : data.toEmail,
+            fromEmail : data.fromEmail,
             subject : data.subject,
-            user : data.user,
             data : data.data
         })
     }

@@ -13,7 +13,8 @@ export class CreateEmailTemplateDto{
     @IsString()
     subject : string;
 
-    user : UserPayloadDto;
+    @IsString()
+    fromEmail : string;
 
     data : Record<string,any>
 

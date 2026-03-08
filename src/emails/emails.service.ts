@@ -16,10 +16,10 @@ export class EmailsService {
         templateId : string,
         to : string,
         subject : string,
-        user : UserPayloadDto
+        fromEmail : string
         data : {}
     }){
-        const {templateId , to , subject , user , data} = params;
+        const {templateId , to , subject , fromEmail , data} = params;
 
         const template = await this.prisma.emailTemplate.findFirst({
             where : {id : templateId}
@@ -47,8 +47,7 @@ export class EmailsService {
 
         await this.prisma.emailLogs.create({
             data : {
-                userId : user.id,
-                fromEmail : user.email,
+                fromEmail : fromEmail,
                 toEmail: to,
                 subject : subject,
                 messageId : result?.messageId as string,

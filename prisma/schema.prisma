@@ -41,11 +41,13 @@ model EmailTemplate {
   requiredFields Json
   createdBy      String?
   user           Users?  @relation(fields: [createdBy], references: [id])
+
+  @@map("email_template")
 }
 
 model EmailLogs {
   id        String   @id @default(uuid())
-  userId    String
+  userId    String?
   fromEmail String
   toEmail   String
   subject   String
@@ -53,7 +55,7 @@ model EmailLogs {
   status    Status?  @default(PENDING)
   createdAt DateTime @default(now())
   sentAt    DateTime @default(now())
-  user      Users    @relation(fields: [userId], references: [id])
+  user      Users?    @relation(fields: [userId], references: [id])
 
   @@map("email_logs")
 }
