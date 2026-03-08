@@ -14,7 +14,7 @@ export class EmailsController {
         @Body() data : CreateEmailTemplateDto
     ){
         return this.emailService.sendEmailTemplate({
-            id : data.id,
+            templateId : data.templateId,
             to : data.toEmail,
             subject : data.subject,
             user : data.user,

@@ -13,16 +13,16 @@ export class EmailsService {
     ){}
 
     async sendEmailTemplate(params : {
-        id : string,
+        templateId : string,
         to : string,
         subject : string,
         user : UserPayloadDto
         data : {}
     }){
-        const {id , to , subject , user , data} = params;
+        const {templateId , to , subject , user , data} = params;
 
         const template = await this.prisma.emailTemplate.findFirst({
-            where : {id}
+            where : {id : templateId}
         })
 
         if(!template){

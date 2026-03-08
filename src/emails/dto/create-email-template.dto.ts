@@ -5,9 +5,6 @@ import { UserPayloadDto } from "./user-payload.dto";
 export class CreateEmailTemplateDto{
 
     @IsString()
-    id : string
-
-    @IsString()
     templateId : string;
 
     @IsString()
