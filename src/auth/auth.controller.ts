@@ -4,6 +4,8 @@ import { AuthService } from './auth.service';
 import { LoginUsersDto } from 'src/users/dto/login-users.dto';
 import { AuthGuard } from './auth.guard';
 import { GenerateApiKeyDto } from './dto/create-api-key.dto';
+import { VerifyEmailDto } from './dto/verify-email.dto';
+import { VerifyTokenDto } from './dto/verify-token.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -20,8 +22,18 @@ export class AuthController {
         return this.authService.login(data);
     }
 
+    @Post('/verify-email')
+    async verifyEmail(@Body() data : VerifyEmailDto){
+        return this.authService.verifyEmail(data);
+    }
+
+    @Post('/verify-token')
+    async verifyToken(@Body() data : VerifyTokenDto){
+        return this.authService.verifyToken(data);
+    }
+
     @UseGuards(AuthGuard)
-    @Post('/generate-token')
+    @Post('/generate-apikeys')
     async generateApiKey(
         @Body() data : GenerateApiKeyDto,
         @Req() request : Request

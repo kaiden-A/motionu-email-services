@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/users/dto/create-users.dto';
 import { UsersService } from 'src/users/users.service';
@@ -70,6 +70,38 @@ export class AuthService {
 
         return {
             access_token : token 
+        }
+
+    }
+
+    async verifyEmail(params : {email : string}){
+
+        const user = await this.userService.findOneByEmail(params.email);
+
+        if(!user){
+            throw new NotFoundException('Email not found');
+        }
+
+        const payload = {email : user.email};
+        const token = await this.jwtService.signAsync(payload);
+
+        return {
+            email : user.email,
+            token : token
+        }
+
+    }
+
+    async verifyToken(params : {token : string}){
+
+        try {
+            await this.jwtService.verifyAsync(params.token);
+        } catch {
+            throw new UnauthorizedException('Invalid token');
+        }
+
+        return {
+            success : true
         }
 
     }
