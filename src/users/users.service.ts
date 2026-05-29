@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-users.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as crypto from 'crypto';
+import { UpdateUsersDto } from './dto/update-users.dto';
 
 @Injectable()
 export class UsersService {
@@ -23,20 +24,23 @@ export class UsersService {
 
     }
 
-    async register(params: CreateUserDto){
-
-        return this.prisma.users.create({
-            data : {
-                email : params.email,
-                password_hash : params.password,
-                is_verified : true
-            },
-            select : {
-                id : true,
-                email : true
-            }
-        })
-    }
+  async update(email : string, params: UpdateUsersDto) {
+    return this.prisma.users.update({
+        where: {
+            email: email // or params.id, depending on how your DTO is structured
+        },
+        data: {
+            name: params.name,
+            password_hash: params.password,
+            is_verified: true
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true
+        }
+    });
+}
 
 
     async generateApiKey(params : {

@@ -12,7 +12,7 @@ export class EmailsGuard implements CanActivate {
   ): Promise<boolean>  {
 
     const request = context.switchToHttp().getRequest<Request>()
-    const apiKeys = request.headers['x-api-key'] as string;
+    const apiKeys = request.headers['motionu-api-key'] as string;
 
     if(!apiKeys){
       throw new UnauthorizedException('API keys is missings');

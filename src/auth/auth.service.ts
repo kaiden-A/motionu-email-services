@@ -16,20 +16,19 @@ export class AuthService {
         private prisma : PrismaService
     ){}
 
-    async signUp(params : CreateUserDto){
+    async signUp( params : CreateUserDto){
 
-        const {name , email , password} = params;
+        const {name, email , password} = params;
 
         const user = await this.userService.findOneByEmail(email);
 
-        if(user){
-            throw new ConflictException('Email Already Exist');
+        if(!user){
+            throw new ConflictException('This Email Cant Use Motion-U services');
         }
 
         const hashPassword = await bcrypt.hash(password , 10);
-        const crtUser = await this.userService.register({
-            name : name,
-            email : email,
+        const crtUser = await this.userService.update(email , {
+            name :  name,
             password : hashPassword
         })
 
@@ -59,7 +58,7 @@ export class AuthService {
             throw new UnauthorizedException('Invalid Credentials');
         }
 
-        const isValid = await bcrypt.compare(params.password , userExist.password_hash);
+        const isValid = await bcrypt.compare(params.password , userExist.password_hash!);
 
         if(!isValid){
             throw new UnauthorizedException('Invalid Credentials')
