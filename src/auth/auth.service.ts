@@ -37,6 +37,7 @@ export class AuthService {
         }
 
         const payload = {
+            name : crtUser.name,
             id : crtUser.id,
             email : crtUser.email
         }
@@ -64,7 +65,7 @@ export class AuthService {
             throw new UnauthorizedException('Invalid Credentials')
         }
 
-        const payload = {id : userExist.id , email : userExist.email}
+        const payload = {id : userExist.id , email : userExist.email , name : userExist.name}
         const token = await this.jwtService.signAsync(payload)
 
         return {
