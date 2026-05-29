@@ -16,38 +16,35 @@ export class AuthService {
         private prisma : PrismaService
     ){}
 
-    async signUp( params : CreateUserDto){
+    async signUp(token: string) {
+        try {
 
-        const {name, email , password} = params;
+            // 1. Verify and decode the incoming verification JWT token 
+            const payload = await this.jwtService.verifyAsync(token);
+            const { email, name, password } = payload; 
 
-        const user = await this.userService.findOneByEmail(email);
+            // 2. Hash the plain-text password securely
+            const saltRounds = 10;
+            const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        if(!user){
-            throw new ConflictException('This Email Cant Use Motion-U services');
+            // 3. Call your update method to save the name, hashed password, and verify the user
+            const updatedUser = await this.userService.update(email, {
+                name: name,
+                password: hashedPassword
+            });
+
+            // 4. Generate the final application login access token for their session
+            const sessionPayload = { id: updatedUser.id, email: updatedUser.email , name : updatedUser.name};
+            const accessToken = await this.jwtService.signAsync(sessionPayload);
+
+            return {
+                access_token: accessToken
+            };
+
+        } catch (error) {
+            // Handles token expiration, invalid tokens, or Prisma update failures
+            throw new UnauthorizedException('Invalid or expired verification token');
         }
-
-        const hashPassword = await bcrypt.hash(password , 10);
-        const crtUser = await this.userService.update(email , {
-            name :  name,
-            password : hashPassword
-        })
-
-        if(!crtUser){
-            throw new Error('Fail Creating Users')
-        }
-
-        const payload = {
-            name : crtUser.name,
-            id : crtUser.id,
-            email : crtUser.email
-        }
-
-        const token = await this.jwtService.signAsync(payload);
-
-        return {
-            access_token : token
-        }
-
     }
 
     async login(params : LoginUsersDto){
@@ -74,15 +71,16 @@ export class AuthService {
 
     }
 
-    async verifyEmail(params : {email : string}){
+    async verifyEmail(params : {email : string , name : string , password : string}){
 
         const user = await this.userService.findOneByEmail(params.email);
+        
 
         if(!user){
             throw new NotFoundException('Email not found');
         }
 
-        const payload = {email : user.email};
+        const payload = {email : user.email , name : params.name , password : params.password};
         const token = await this.jwtService.signAsync(payload);
 
         return {
