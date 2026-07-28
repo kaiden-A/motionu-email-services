@@ -1,8 +1,10 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { CreateEmailTemplateDto } from './dto/create-email-template.dto';
 import { EmailsService } from './emails.service';
 import { EmailsGuard } from './emails.guard';
 
+@ApiTags('Emails')
 @Controller('emails')
 export class EmailsController {
 
@@ -10,6 +12,9 @@ export class EmailsController {
 
     @UseGuards(EmailsGuard)
     @Post('send')
+    @ApiSecurity('motionu-api-key')
+    @ApiOperation({ summary: 'Send a transactional email using a template' })
+    @ApiResponse({ status: 201, description: 'Email sent successfully' })
     async sendTemplateEmail(
         @Body() data : CreateEmailTemplateDto
     ){
