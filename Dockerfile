@@ -2,7 +2,8 @@
 # Stage 1: Build
 # -------------------------------
 FROM node:20-alpine AS builder
-RUN RUN apk update && apk add --no-cache libc6-compat
+# Updated line below:
+RUN apk update && apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
@@ -15,8 +16,8 @@ RUN npm run build
 # Stage 2: Production
 # -------------------------------
 FROM node:20-alpine
-# Required for Prisma to run on Alpine
-RUN apk add --no-cache libc6-compat
+# Updated line below:
+RUN apk update && apk add --no-cache libc6-compat
 WORKDIR /app
 
 # 1. Copy dependencies and install only production ones
