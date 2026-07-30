@@ -16,7 +16,7 @@ export class EmailsService {
         templateId : string,
         to : string,
         subject : string,
-        fromEmail : string
+        fromEmail? : string
         data : {}
     }){
         const {templateId , to , subject , fromEmail , data} = params;
@@ -42,12 +42,13 @@ export class EmailsService {
         const result = await this.brevoService.sendEmail({
             to,
             subject,
-            htmlContent : html
+            htmlContent : html,
+            fromEmail
         })
 
         await this.prisma.emailLogs.create({
             data : {
-                fromEmail : fromEmail,
+                fromEmail : fromEmail || 'info@motionukict.com',
                 toEmail: to,
                 subject : subject,
                 messageId : result?.messageId as string,
@@ -63,8 +64,36 @@ export class EmailsService {
     }
 
 
-    async sendEmailHtml(){
+    async sendEmailHtml(params : {
+        to : string,
+        subject : string,
+        fromEmail? : string,
+        htmlContent : string
+    }){
+        const {to , subject , fromEmail , htmlContent} = params;
 
+        const result = await this.brevoService.sendEmail({
+            to,
+            subject,
+            htmlContent,
+            fromEmail
+        })
+
+        await this.prisma.emailLogs.create({
+            data : {
+                fromEmail : fromEmail || 'info@motionukict.com',
+                toEmail: to,
+                subject : subject,
+                messageId : result?.messageId as string,
+
+            }
+
+        })
+
+        return{
+            success : true,
+            message : 'Successfully Sent Email'
+        }
     }
 
     private  renderTemplate(html: string, data: Record<string, string>) {

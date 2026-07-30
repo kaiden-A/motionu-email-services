@@ -17,8 +17,8 @@ export class BrevoService {
     }
 
     async sendEmail(
-        {to , subject , htmlContent} : 
-        {to : string , subject : string , htmlContent : string}
+        {to , subject , htmlContent , fromEmail} : 
+        {to : string , subject : string , htmlContent : string, fromEmail? : string}
     ){
 
         try{
@@ -28,7 +28,7 @@ export class BrevoService {
                 htmlContent,
                 sender : {
                     name : 'Motion-U : Innovation in Action',
-                    email : 'info@motionukict.com'
+                    email : fromEmail || 'info@motionukict.com'
                 },
                 to : [{email : to}]
             })

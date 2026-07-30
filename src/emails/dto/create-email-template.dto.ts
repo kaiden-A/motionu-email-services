@@ -1,4 +1,4 @@
-import { IsString } from "class-validator";
+import { IsString, IsOptional } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 
@@ -16,9 +16,10 @@ export class CreateEmailTemplateDto{
     @IsString()
     subject : string;
 
-    @ApiProperty({ example: 'sender@example.com' })
+    @ApiProperty({ example: 'sender@example.com', required: false })
+    @IsOptional()
     @IsString()
-    fromEmail : string;
+    fromEmail? : string;
 
     @ApiProperty({ description: 'Key-value pairs to fill template placeholders', example: { name: 'John' } })
     data : Record<string,any>
