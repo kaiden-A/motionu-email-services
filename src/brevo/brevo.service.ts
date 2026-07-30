@@ -28,7 +28,7 @@ export class BrevoService {
                 htmlContent,
                 sender : {
                     name : 'Motion-U : Innovation in Action',
-                    email : fromEmail || 'info@motionukict.com'
+                    email : 'info@motionukict.com'
                 },
                 to : [{email : to}]
             })
