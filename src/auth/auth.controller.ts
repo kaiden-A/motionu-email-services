@@ -7,6 +7,7 @@ import { AuthGuard } from './auth.guard';
 import { GenerateApiKeyDto } from './dto/create-api-key.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { VerifyTokenDto } from './dto/verify-token.dto';
+import { VerifyApiKeyDto } from './dto/verify-api-key.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -44,6 +45,16 @@ export class AuthController {
     @ApiResponse({ status: 401, description: 'Invalid token' })
     async verifyToken(@Body() data : VerifyTokenDto){
         return this.authService.verifyToken(data);
+    }
+
+    @Post('/verify-api-key')
+    @ApiOperation({ summary: 'Verify an API key is valid (cross-check from other services)' })
+    @ApiResponse({ status: 200, description: 'API key is valid' })
+    @ApiResponse({ status: 401, description: 'Invalid or revoked API key' })
+    async verifyApiKey(@Body() data : VerifyApiKeyDto){
+        return this.authService.verifyApiKey({
+            apiKey : data.apiKey
+        })
     }
 
     @UseGuards(AuthGuard)

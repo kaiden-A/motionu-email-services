@@ -24,7 +24,7 @@ export class EmailsGuard implements CanActivate {
       }
     })
 
-    if(!keyRecord){
+    if(!keyRecord || keyRecord.revoked){
       throw new UnauthorizedException('API keys not valid')
     }
 

@@ -104,6 +104,24 @@ export class AuthService {
 
     }
 
+    async verifyApiKey(params : {apiKey : string}){
+
+        const keyRecord = await this.prisma.apiKeys.findUnique({
+            where : {
+                apiKey : params.apiKey
+            }
+        })
+
+        if(!keyRecord || keyRecord.revoked){
+            throw new UnauthorizedException('API key is not valid')
+        }
+
+        return {
+            valid : true
+        }
+
+    }
+
     async generateApiKey(params : {
         userId : string,
         name : string
